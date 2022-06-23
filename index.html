@@ -44,9 +44,10 @@
             }
 
 
-            getPage = (id) => {
+            getPage = (id, e) => {
+                $('<div>loading.... please wait ....</div>').appendTo('body').modal();
                 window.optly.get('pages/' + id, (res) => {
-                    // alert(JSON.stringify(res));
+                    // alert(JSON.stringify(res));                    
                     let html = `<div class="modal" style="display: inline-block;">
                                     <code>${JSON.stringify(res)}</code>
                                     <a href="#" rel="modal:close">Close</a>
@@ -102,7 +103,7 @@
                                             <td>${item.name}</td>
                                             <td><a href="https://app.optimizely.com/v2/projects/${item.project_id}" target="_blank">${item.project_id}</a></td>
                                             <td>${item.status}</td>
-                                            <td>${item.type == "page" ? html`<button onClick=${e => this.getPage(item.id)}>Get Details</button>` : ''}</td>
+                                            <td>${item.type == "page" ? html`<button onClick=${e => this.getPage(item.id, e)}>Get Details</button>` : ''}</td>
                                         </tr>
                                     </${Fragment}>`
                                 ))}

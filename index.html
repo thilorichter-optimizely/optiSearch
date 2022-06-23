@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css" />
     <link rel="stylesheet" href="index.css">
     <title>Search Across Optimizely</title>
 </head>
@@ -12,6 +13,7 @@
 <body>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="optimizely-framework-v2.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.js"></script>
     <script type="module">
         // import and setup
         import { Fragment, h, Component, render } from 'https://unpkg.com/preact?module';
@@ -30,9 +32,9 @@
                 var searchTerm = event.currentTarget.value;
                 this.setState({ spinner: true });
 
-                window.optly.get(`search?query=${searchTerm}&fullsearch=true&type=experiment&type=feature`, (res) => {
+                window.optly.get(`search?query=${searchTerm}&fullsearch=true&type=experiment&type=feature&type=page`, (res) => {
                     this.setState({ searchResults: res });
-                    console.log(this.state.searchResults)
+                    console.log(res)
                     this.setState({ spinner: false });
                 });
             }
@@ -41,8 +43,20 @@
                 window.optly = new OptimizelyAPI({ client_id: 21206450713 });
             }
 
+
+            getPage = (id) => {
+                window.optly.get('pages/' + id, (res) => {
+                    // alert(JSON.stringify(res));
+                    let html = `<div class="modal" style="display: inline-block;">
+                                    <code>${JSON.stringify(res)}</code>
+                                    <a href="#" rel="modal:close">Close</a>
+                                </div>`;
+                    $(html).appendTo('body').modal();
+                })
+            }
+
             render() {
-                return html`                    
+                return html`                  
                     <div class="searchBox">
                         <input type="search" id="search" placeholder=" Search" onChange=${this.search}/>
                     </div>
@@ -57,6 +71,7 @@
                                     <th>Name</th>
                                     <th>Project ID</th>
                                     <th>Status</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -69,6 +84,7 @@
                                             <td>${item.name}</td>
                                             <td><a href="https://app.optimizely.com/v2/projects/${item.project_id}" target="_blank">${item.project_id}</a></td>
                                             <td>${item.status}</td>
+                                            <td>${item.type == "page" ? html`<button onClick=${e => this.getPage(item.id)}>Get Details</button>` : ''}</td>
                                         </tr>
                                     </${Fragment}>`
                                 ))}

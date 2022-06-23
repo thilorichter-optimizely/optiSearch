@@ -55,6 +55,24 @@
                 })
             }
 
+            getItemLink = (item) => {
+                switch (item.type) {
+                    case 'page':
+                        return html`<td><a href="https://app.optimizely.com/v2/projects/${item.project_id}/implementation/pages/${item.id}" target="_blank">${item.id}</a></td>`;
+                        break;
+                    case 'experiment':
+                        return html`<td><a href="https://app.optimizely.com/v2/projects/${item.project_id}/experiments/${item.id}" target="_blank">${item.id}</a></td>`;
+                        break;
+                    case 'feature':
+                        return html`<td><a href="https://app.optimizely.com/v2/projects/${item.project_id}/features/${item.id}" target="_blank">${item.id}</a></td>`;
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            
+
             render() {
                 return html`                  
                     <div class="searchBox">
@@ -78,7 +96,7 @@
                                 ${this.state.searchResults.map(item => (
                                     html`<${Fragment} key=${item.id}>
                                         <tr>        
-                                            ${item.type == 'experiment' ? html`<td><a href="https://app.optimizely.com/v2/projects/${item.project_id}/experiments/${item.id}" target="_blank">${item.id}</a></td>` : html`<td><a href="https://app.optimizely.com/v2/projects/${item.project_id}/features/${item.id}" target="_blank">${item.id}</a></td>`}                                            
+                                            ${this.getItemLink(item)}                                            
                                             <td>${item.type}</td>
                                             <td>${item.key}</td>                                            
                                             <td>${item.name}</td>
